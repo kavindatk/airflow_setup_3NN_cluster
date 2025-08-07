@@ -348,4 +348,4 @@ Web Link :
 
 Login password in the "simple_auth_manager_passwords.json.generated" file , you can modify the password 
 
-http://<node id>:3333/
+http://Node IP:3333/
