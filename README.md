@@ -335,6 +335,7 @@ You can use the following commands to start and verify the Airflow services.Once
 ```bash
 nohup airflow api-server > airflow-webserver.log 2>&1 &
 nohup airflow scheduler > airflow-scheduler.log 2>&1 &
+nohup airflow celery worker > airflow-worker.log 2>&1 &
 
 # kill the service 
 pkill -f airflow 
