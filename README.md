@@ -347,6 +347,7 @@ source ~/.bashrc
 
 pip install "apache-airflow[celery,mysql,apache.hive]==3.0.3" --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-3.0.3/constraints-3.9.txt"
 pip install graphviz
+pip install flower # This use for celery monitor
 ```
 
 ### 3.3 Configure Airflow
@@ -388,6 +389,7 @@ You can use the following commands to start and verify the Airflow services.Once
 nohup airflow api-server > airflow-webserver.log 2>&1 &
 nohup airflow scheduler > airflow-scheduler.log 2>&1 &
 nohup airflow celery worker > airflow-worker.log 2>&1 &
+nohup airflow celery flower > airflow-flower.log 2>&1 &
 
 # kill the service 
 pkill -f airflow 
@@ -406,3 +408,30 @@ Web Link :
 Login password in the "simple_auth_manager_passwords.json.generated" file , you can modify the password 
 
 http://Node IP:3333/
+
+
+### Airflow Web
+ 
+<picture>
+  <img alt="docker" src="https://github.com/kavindatk/airflow_setup_3NN_cluster/blob/main/images/airflow_web.JPG" width="800" height="400">
+</picture>
+
+
+### Airflow Flower Web
+
+Airflow Flower is a web-based tool for monitoring and managing Celery workers in Apache Airflow. It provides a real-time dashboard that shows:
+
+Task progress and status
+Worker status and resource usage
+Queues and routing information
+Ability to revoke or retry tasks
+Monitoring of task execution times and failures
+It's especially useful when you're running Airflow in CeleryExecutor mode, which distributes tasks across multiple workers.
+
+<picture>
+  <img alt="docker" src="https://github.com/kavindatk/airflow_setup_3NN_cluster/blob/main/images/flower_web_1.JPG" width="800" height="400">
+</picture>
+<br/>
+<picture>
+  <img alt="docker" src="https://github.com/kavindatk/airflow_setup_3NN_cluster/blob/main/images/flower_web_2.JPG" width="800" height="400">
+</picture>
