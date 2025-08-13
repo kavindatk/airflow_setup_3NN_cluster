@@ -158,7 +158,7 @@ lock-timeout 30;
 
 ```bash
 csync2 -k csync2.key_airflow_dags
-
+csync2 -xv # Service start
 ````
 
 ```xml
