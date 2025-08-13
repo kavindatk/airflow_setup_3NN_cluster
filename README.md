@@ -395,6 +395,10 @@ pkill -f airflow
 #Other useful comments  
 airflow dags list
 airflow celery worker
+
+airflow dags reserialize
+airflow dags delete data_pipeline_tutorial_v3 # Delete Dag Log
+airflow tasks test data_pipeline_tutorial_v3 generate_data 2024-01-01 # Test Dag
 ```
 
 Web Link :
