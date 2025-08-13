@@ -119,6 +119,58 @@ sudo umount /mnt/shared_smb # unmount shared folder
 
 <br/>
 
+### csync2 Service
+
+However, <b>csync2</b> is also another good tool to achieve the same purpose.
+In this setup, I have used both options, and you can choose whichever you prefer.
+
+One advantage of csync2 is that when one node goes down, the remaining nodes still have the data.
+In contrast, with Samba, if the main node goes down, file access will be lost.
+
+The following steps show the installation and configuration of csync2.
+
+
+```bash
+sudo apt-get -y install csync2
+```
+
+
+```bash
+nano /etc/csync2.cfg
+```
+
+```xml
+# Please read the documentation:
+# http://oss.linbit.com/csync2/paper.pdf
+nossl * *;
+tempdir /tmp/;
+lock-timeout 30;
+  group DAGS
+  {
+     host node1;
+     host node2;
+     host node3;
+     key /home/airflow/csync2.key_airflow_dags;
+     include /home/airflow/airflow/dags;
+     auto younger;
+  }
+```
+
+```bash
+csync2 -k csync2.key_airflow_dags
+
+````
+
+```xml
+airflow@mst01:~$ crontab -l # every 5 min sync
+
+*/5 * * * * /usr/sbin/csync2 -x > /home/airflow/csync2.log 2>&1
+
+```
+
+
+<br/>
+
 ###  1.4 Verify Installation
 
 You can verify the <b>Samba shared folder</b> setup by creating a sample file on <b>Master 01</b> under the ``` /shared ``` directory. Then, check if the same file appears on <b> Master 02 </b> or <b> Master 03 </b> under the ``` /mnt/shared_smb ``` path.
