@@ -54,6 +54,8 @@ The following steps will walk you through the setup:
 The following steps will guide you through the samba installation process on an Ubuntu environment.
 
 <br/>
+
+
 ### 1.1 Install samba on ubuntu environment 
 
 On Master 01 Node : 
