@@ -133,11 +133,22 @@ The following steps show the installation and configuration of csync2.
 
 
 ```bash
+# All 3 servers
 sudo apt-get -y install csync2
+sudo apt install xinetd
 ```
 
+```bash
+# Master 1 , generate key copy to other 2
+
+sudo csync2 -k /etc/csync2/csync2.key
+
+sudo scp /etc/csync2/csync2.key root@server2:/etc/csync2/
+sudo scp /etc/csync2/csync2.key root@server3:/etc/csync2/
+````
 
 ```bash
+# All 3
 nano /etc/csync2.cfg
 ```
 
@@ -147,21 +158,62 @@ nano /etc/csync2.cfg
 nossl * *;
 tempdir /tmp/;
 lock-timeout 30;
-  group DAGS
-  {
-     host node1;
-     host node2;
-     host node3;
-     key /home/airflow/csync2.key_airflow_dags;
-     include /home/airflow/airflow/dags;
-     auto younger;
-  }
+group mycluster
+{
+    host server1.example.com;
+    host server2.example.com;
+    host server3.example.com;
+    
+    key /etc/csync2/csync2.key;
+    
+    include /path/to/your/sync/folder;
+    
+    auto younger;
+    backup-directory /var/backups/csync2;
+    backup-generations 3;
+}
 ```
 
 ```bash
-csync2 -k csync2.key_airflow_dags
-csync2 -xv # Service start
-````
+# All 3
+sudo nano /etc/xinetd.d/csync2
+
+service csync2
+{
+    flags           = REUSE
+    socket_type     = stream
+    wait            = no
+    user            = root
+    group           = root
+    server          = /usr/sbin/csync2
+    server_args     = -i -R
+    port            = 30865
+    type            = UNLISTED
+    disable         = no
+}
+```
+
+```bash
+# Enable and start xinetd (All 3)
+sudo systemctl enable xinetd
+sudo systemctl start xinetd
+sudo systemctl restart xinetd
+
+# Check if csync2 port is listening
+sudo netstat -tlnp | grep 30865
+```
+
+```bash
+# On Master 1
+# Check configuration
+sudo csync2 -T
+
+# Force initial sync to all hosts
+sudo csync2 -xv
+
+# Check for conflicts
+sudo csync2 -cr /path/to/your/sync/folder
+```
 
 ```xml
 airflow@mst01:~$ crontab -l # every 5 min sync
